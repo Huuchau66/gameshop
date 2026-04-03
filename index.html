@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>-H-Steam</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <header>
+      <div>
+        <a href="https://k65p34.csb.app/">
+          <img
+            src="https://store.fastly.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016"
+        /></a>
+      </div>
+      <div class="righttext">
+        <div class="hometext" id="home">
+          <a href="https://k65p34.csb.app/">Home</a>
+        </div>
+        <!-- <div class="hometext" id="cart"><a href="#">Cart</a></div> -->
+        <div class="hometext" id="about"><a href="#">About us</a></div>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <label for="Search"><h3>Search for game</h3></label>
+        <input id="Search" type="text" placeholder="Search" />
+        <button id="Search-bnt">🔍</button>
+        <h4>Category</h4>
+        <div class="category">
+          <div>
+            <label for="Allgame"
+              ><button class="genge" id="Allgame" value="" />All Game</label
+            >
+          </div>
+        </div>
+        <h4>Tags</h4>
+        <div class="Tags">
+          <select class="select-box" id="selectTags"></select>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div class="main">
+        <div class="section-title">Best of all time</div>
+        <div class="gridB" id="best"></div>
+        <div class="section-title" id="title">All Games</div>
+        <div class="grid" id="grid"></div>
+      </div>
+    </div>
+    <footer class="footer"></footer>
+    <script src="/homejs.js"></script>
+  </body>
+</html>
