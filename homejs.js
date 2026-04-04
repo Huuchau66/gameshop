@@ -4,6 +4,14 @@ const URL_GAMEAPI = `https://cs-steam-api-production.up.railway.app/api/`;
 let currentSearch = "";
 let currentGenre = "";
 let currenntTag = "";
+
+const saveCart = (cart) => {
+  localStorage.setItem("cart", JSON.stringify(cart));
+};
+const getCart = () => {
+  return JSON.parse(localStorage.getItem("cart")) || [];
+};
+
 //Click Home/about/cart
 const about = document.querySelector(`#about`);
 about.addEventListener(`click`, () => {
@@ -13,7 +21,7 @@ about.addEventListener(`click`, () => {
 const bntSearch = document.querySelector("#Search-bnt");
 bntSearch.addEventListener("click", () => {
   currentSearch = document.querySelector("#Search").value;
-  const query = `search=${currentSearch}&genre=${currentGenre}`;
+  const query = `search=${currentSearch}`;
 
   renderListOfGame(query);
 });
@@ -44,10 +52,10 @@ const renderListOfGenres = async () => {
 
     document.querySelectorAll(".genge").forEach((cb) => {
       cb.addEventListener("click", (e) => {
+        document.querySelector("#Search").value="";
         currentGenre = e.target.value;
-        const query = `search=${currentSearch}&genre=${currentGenre}`;
+        const query = `&genre=${currentGenre}`;
         renderListOfGame(query);
-
         if (currentGenre) {
           document.querySelector(`#title`).textContent = currentGenre;
         } else {
@@ -59,6 +67,7 @@ const renderListOfGenres = async () => {
     console.log(`error`, error);
   }
 };
+
 renderListOfGenres(); //*
 //ListOfTags
 const ListOfTags = async () => {
@@ -120,7 +129,15 @@ const renderListOfGame = async (query = "") => {
       <img src=${games.headerImage} />
       <p>${games.name}</p>
       <span class="price">$${games.price}</span>
+         <button class="addtocart">🛒</button>
         </div>`;
+
+        const btn = x.querySelector(".addtocart");
+btn.addEventListener("click", (e) => {
+  e.preventDefault(); 
+   e.stopPropagation(); 
+  addToCart(games);
+});
       List.appendChild(x);
 
       x.addEventListener("click", (e) => {
@@ -157,12 +174,12 @@ const renderListOfBestGame = async () => {
     List.innerHTML = "";
 
     data.games.forEach((games) => {
-      const x = document.createElement("a");
+      const x = document.createElement("div");
       x.classList.add("besttrack");
-      x.href = "#";
       x.innerHTML = ` <div class="track"><img src=${games.headerImage} />
       <p>${games.name}</p>
-      <span class="price">$${games.price}</span></div>
+      <span class="price">$${games.price} </span>
+       </div>
         `;
       List.appendChild(x);
 
@@ -180,13 +197,16 @@ renderListOfBestGame();
 const renderGameDetail = (game) => {
   document.querySelector(`#title`).textContent = `Game Detail`;
   const info = document.querySelector(".grid");
+
+
   info.innerHTML = `
     <div class="game-detail">
       <img src="${game.headerImage}" />
       <div class="info">
       <h2>${game.name}</h2>
       <p><strong>ID:</strong> ${game.appId}</p>
-      <p><strong>Price:</strong> $${game.price}</p>
+      <p><strong>Price:</strong> $${game.price}</p> 
+      <button class="addtocart">🛒</button>
       <p><strong>DiscountPercent:</strong> ${game.discountPercent}%</p>
       <p><strong>Genres:</strong> ${game.genres}</p>
       <p><strong>ReleaseDate:</strong> ${game.releaseDate}</p>
@@ -196,8 +216,16 @@ const renderGameDetail = (game) => {
       </div>
     </div>
   `;
+  const btn = document.querySelector(".addtocart");
+  btn.addEventListener("click", (e) => {
+  e.preventDefault(); 
+  e.stopPropagation(); 
+  addToCart(game);
+});
+
   document.querySelector("#backBtn").addEventListener("click", () => {
     renderListOfGame();
+   
   });
 };
 // About us
@@ -206,3 +234,63 @@ const renderAboutus = () => {
   about.innerHTML =
     "This website was developed by me personally. It is not for commercial use. For any inquiries, please contact me at xiao99zhou@gmail.com";
 };
+//Add to cart
+
+const addToCart = (game) => {
+  const cart = getCart();
+  const exist = cart.find((item) => item.appId === game.appId);
+  if (!exist) {
+    cart.push(game);
+    saveCart(cart);
+    alert("Added to cart!");
+  } else {
+    alert("Already in cart!");
+  }
+};
+
+//render cart
+const renderCart = () => {
+  const cart = getCart();
+  const container = document.querySelector(".container");
+
+ container.innerHTML = `
+  <h1>Your Cart</h1>
+  <div class="cartContainer"></div>
+`;
+
+const grid = document.querySelector(".cartContainer");
+
+  if (cart.length === 0) {
+    container.innerHTML += "<h1> : Your Cart is empty</h1>";
+    return;
+  }
+
+  cart.forEach((game) => {
+  const item = document.createElement("div");
+  item.classList.add("cartItem");
+
+  item.innerHTML = `
+    <img src="${game.headerImage}" />
+    <p>${game.name}</p>
+    <span>$${game.price}</span>
+    <button class="remove">❌</button>
+  `;
+   grid.appendChild(item);
+  });
+
+  // remove item
+  document.querySelectorAll(".remove").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const index = e.target.dataset.index;
+      const cart = getCart();
+      cart.splice(index, 1);
+      saveCart(cart);
+      renderCart();
+    });
+  });
+};
+//show cart
+const cartBtn = document.querySelector("#cart");
+cartBtn.addEventListener("click", () => {
+  renderCart();
+});
